@@ -23,7 +23,7 @@ class PerceptDetailPagePlugin(rigorwebapp.plugin.BasePlugin):
 		@app.route('/db/<db_name>/percept/<percept_id>')
 		@AuthClient.check_access_and_inject_user(self.rigor_config)
 		def percept_detail_page(db_name, percept_id, username=None):
-			if not db_name in backend.db_names():
+			if db_name not in backend.db_names():
 				abort(404)
 			percept = backend.percept(db_name, percept_id)
 			if percept is None:

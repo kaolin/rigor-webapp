@@ -70,7 +70,7 @@ class Backend(object):
 		"""
 		assert db_name in self._db_names
 		db_real_name = self._real_name_for_db(db_name)
-		if not db_name in self.dbs:
+		if db_name not in self.dbs:
 			self.dbs[db_name] = rigor.database.Database(db_real_name, self.rigor_config)
 		# XXX LOOK BELOW THIS LINE AT YOUR OWN RISK!
 		try:
@@ -85,7 +85,7 @@ class Backend(object):
 		"""Make sure that the rigor PerceptOps object has been created for the given database name.
 		"""
 		assert db_name in self._db_names
-		if not db_name in self._perceptops:
+		if db_name not in self._perceptops:
 			self._perceptops[db_name] = rigor.perceptops.PerceptOps(self.rigor_config)
 
 	def db_names(self):
@@ -226,8 +226,8 @@ class Backend(object):
 		else:
 			percept['annotations'] = []
 
-		if not 'sensors' in percept:
-			percept['sensors'] = dict()
+		if 'sensors' not in percept:
+			percept['sensors'] = {}
 		percept['stamp'] = utc_datetime_to_unix_seconds(percept['stamp'])
 		for annotation in percept['annotations']:
 			annotation['stamp'] = utc_datetime_to_unix_seconds(annotation['stamp'])
@@ -311,7 +311,7 @@ class Backend(object):
 			# http://docs.sqlalchemy.org/en/rel_1_0/core/tutorial.html
 
 			# we build two queries -- one if we can do all of our queries against just percepts, otherwise merging with annotations; TODO: this is not the best approach, it would be better as one query that we're just a little bit smarter about...
-			sql = list()
+			sql = []
 			need_annotations = False
 			# annotation facets
 			if 'annotation_domain' in query:
@@ -339,10 +339,12 @@ class Backend(object):
 				# not allowed to use both in a single query
 				or_string = ' or '
 				and_string = ' and '
-				if or_string in annotation_property_stringlower and not and_string in annotation_property_stringlower:
+				if (or_string in annotation_property_stringlower
+				    and and_string not in annotation_property_stringlower):
 					annotation_property_join_mode = or_
 					annotation_property_join_string = or_string
-				elif and_string in annotation_property_stringlower and not or_string in annotation_property_stringlower:
+				elif (and_string in annotation_property_stringlower
+				      and or_string not in annotation_property_stringlower):
 					annotation_property_join_mode = and_
 					annotation_property_join_string = and_string
 				else:
@@ -392,10 +394,12 @@ class Backend(object):
 				# not allowed to use both in a single query
 				or_string = ' or '
 				and_string = ' and '
-				if or_string in percept_property_stringlower and not and_string in percept_property_stringlower:
+				if (or_string in percept_property_stringlower
+				    and and_string not in percept_property_stringlower):
 					percept_property_join_mode = or_
 					percept_property_join_string = or_string
-				elif and_string in percept_property_stringlower and not or_string in percept_property_stringlower:
+				elif (and_string in percept_property_stringlower
+				      and or_string not in percept_property_stringlower):
 					percept_property_join_mode = and_
 					percept_property_join_string = and_string
 				else:
@@ -477,10 +481,7 @@ class Backend(object):
 			for load_path in load_paths:
 				j = None
 				for chunk in load_path.split('.'):
-					if not j:
-						j = joinedload(chunk)
-					else:
-						j = j.joinedload(chunk)
+					j = joinedload(chunk) if not j else j.joinedload(chunk)
 				joinedloads.append(j)
 
 		if not need_annotations and not need_percepts:

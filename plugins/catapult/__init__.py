@@ -75,7 +75,7 @@ def find_percepts_to_label(backend, db_name, domain, limit=10):
 		params = dict(limit=limit)
 		rows = session.execute(text(raw_sql), params=params)
 		timer.tick('executed sql')
-		percept_group = dict()
+		percept_group = {}
 		this_percept_id = None
 		for row in rows:
 			rowdict = dict(zip(col_names, row))
@@ -113,7 +113,7 @@ class CatapultPlugin(rigorwebapp.plugin.BasePlugin):
 		@app.route('/db/<db_name>/catapult')
 		@AuthClient.check_access_and_inject_user(self.rigor_config)
 		def catapult_main_page(db_name, username=None):
-			if not db_name in backend.db_names():
+			if db_name not in backend.db_names():
 				abort(404)
 
 			page_state = {
@@ -140,7 +140,7 @@ class CatapultPlugin(rigorwebapp.plugin.BasePlugin):
 			except ValueError:
 				n = self.percepts_N_default
 			n = max(1, min(self.percepts_N_max, n))
-			if not db_name in backend.db_names():
+			if db_name not in backend.db_names():
 				abort(404)
 			percepts = find_percepts_to_label(backend, db_name, self.domain, limit=n)
 			return jsonify({'success': True, 'percepts': percepts})

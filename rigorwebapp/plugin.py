@@ -66,13 +66,13 @@ class TemplateSlots(object):
 	The page template then uses the content of the slots.
 	"""
 	def __init__(self):
-		self._slots = dict()
+		self._slots = {}
 	def append(self, slot, content):
 		"""Appends the content to the given slot.
 		slot: a string
 		content: a string (html, path to css file, etc, depending on the slot)
 		"""
-		if not slot in self._slots:
+		if slot not in self._slots:
 			self._slots[slot] = []
 		self._slots[slot].append(content)
 	def get(self, slot):
@@ -84,9 +84,9 @@ class TemplateSlots(object):
 		"""Returns a list of all the contents of the given slot, with duplicates removed.
 		If a slot was never appended to and does not exist, return an empty list.
 		"""
-		result = list()
+		result = []
 		for item in self.get(slot):
-			if not item in result:
+			if item not in result:
 				result.append(item)
 		return result
 	def __repr__(self):

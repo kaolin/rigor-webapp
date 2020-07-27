@@ -33,10 +33,7 @@ try:
 			'''
 			try:
 				delta = int(delta)
-				if uwsgi.cache_exists(key):
-					value = self.get(key) - delta
-				else:
-					value = -delta
+				value = self.get(key) - delta if uwsgi.cache_exists(key) else -delta
 				self.set(key, value)
 				return value
 			except Exception as err:
@@ -83,10 +80,7 @@ try:
 			'''
 			try:
 				delta = int(delta)
-				if uwsgi.cache_exists(key):
-					value = self.get(key) + delta
-				else:
-					value = delta
+				value = self.get(key) + delta if uwsgi.cache_exists(key) else delta
 				self.set(key, value)
 				return value
 			except Exception as err:

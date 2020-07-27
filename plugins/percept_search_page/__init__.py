@@ -35,7 +35,7 @@ class PerceptSearchPagePlugin(rigorwebapp.plugin.BasePlugin):
 		@app.route('/db/<db_name>/perceptsearch')
 		@AuthClient.check_access_and_inject_user(self.rigor_config)
 		def percept_search_page(db_name, username=None):
-			if not db_name in backend.db_names():
+			if db_name not in backend.db_names():
 				abort(404)
 
 			# clean up search params
@@ -58,7 +58,7 @@ class PerceptSearchPagePlugin(rigorwebapp.plugin.BasePlugin):
 				random_out_of
 			""".strip().split()
 			for key in list(search_params.keys()):
-				if not key in param_whitelist:
+				if key not in param_whitelist:
 					del search_params[key]
 				if search_params[key] == '':
 					del search_params[key]

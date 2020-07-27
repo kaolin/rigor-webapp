@@ -13,7 +13,7 @@ class PerceptAnnotationsPlugin(rigorwebapp.plugin.BasePlugin):
 			self.external_link_templates = json.loads(external_config_string)
 		except:
 			debug_error('WARNING: could not parse JSON in config file for external_link_templates')
-			self.external_link_templates = dict()
+			self.external_link_templates = {}
 
 	def add_routes(self, app, backend, plugin_instances):
 		pass
